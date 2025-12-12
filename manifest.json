@@ -1,15 +1,15 @@
-{
-  "20190115": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20190115/20190115.zip",
-  "20200531": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20200531/20200531.zip",
-  "20201014": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20201014/20201014.zip",
-  "20220109": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20220109/20220109.zip",
-  "20220220": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20220220/20220220.zip",
-  "20220413": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20220413/20220413.zip",
-  "20220823": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20220823/20220823.zip",
-  "20230427": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20230427/20230427.zip",
-  "20230923": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20230923/20230923.zip",
-  "20240330": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20240330/20240330.zip",
-  "20241029": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20241029/20241029.zip",
-  "20250329": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20250329/20250329.zip",
-  "20251101": "https://github.com/jyingjie/hifast-tcal-data/releases/download/20251101/20251101.zip"
-}
+[
+  "20190115",
+  "20200531",
+  "20201014",
+  "20220109",
+  "20220220",
+  "20220413",
+  "20220823",
+  "20230427",
+  "20230923",
+  "20240330",
+  "20241029",
+  "20250329",
+  "20251101"
+]
