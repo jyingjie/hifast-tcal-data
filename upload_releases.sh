@@ -1,0 +1,15 @@
+#!/bin/bash
+# Requires GitHub CLI (gh) installed and authenticated
+gh release view 20190115 >/dev/null 2>&1 || gh release create 20190115 20190115.zip --title 'Tcal Data 20190115' --notes 'Auto-generated release for 20190115'
+gh release view 20200531 >/dev/null 2>&1 || gh release create 20200531 20200531.zip --title 'Tcal Data 20200531' --notes 'Auto-generated release for 20200531'
+gh release view 20201014 >/dev/null 2>&1 || gh release create 20201014 20201014.zip --title 'Tcal Data 20201014' --notes 'Auto-generated release for 20201014'
+gh release view 20220109 >/dev/null 2>&1 || gh release create 20220109 20220109.zip --title 'Tcal Data 20220109' --notes 'Auto-generated release for 20220109'
+gh release view 20220220 >/dev/null 2>&1 || gh release create 20220220 20220220.zip --title 'Tcal Data 20220220' --notes 'Auto-generated release for 20220220'
+gh release view 20220413 >/dev/null 2>&1 || gh release create 20220413 20220413.zip --title 'Tcal Data 20220413' --notes 'Auto-generated release for 20220413'
+gh release view 20220823 >/dev/null 2>&1 || gh release create 20220823 20220823.zip --title 'Tcal Data 20220823' --notes 'Auto-generated release for 20220823'
+gh release view 20230427 >/dev/null 2>&1 || gh release create 20230427 20230427.zip --title 'Tcal Data 20230427' --notes 'Auto-generated release for 20230427'
+gh release view 20230923 >/dev/null 2>&1 || gh release create 20230923 20230923.zip --title 'Tcal Data 20230923' --notes 'Auto-generated release for 20230923'
+gh release view 20240330 >/dev/null 2>&1 || gh release create 20240330 20240330.zip --title 'Tcal Data 20240330' --notes 'Auto-generated release for 20240330'
+gh release view 20241029 >/dev/null 2>&1 || gh release create 20241029 20241029.zip --title 'Tcal Data 20241029' --notes 'Auto-generated release for 20241029'
+gh release view 20250329 >/dev/null 2>&1 || gh release create 20250329 20250329.zip --title 'Tcal Data 20250329' --notes 'Auto-generated release for 20250329'
+gh release view 20251101 >/dev/null 2>&1 || gh release create 20251101 20251101.zip --title 'Tcal Data 20251101' --notes 'Auto-generated release for 20251101'
