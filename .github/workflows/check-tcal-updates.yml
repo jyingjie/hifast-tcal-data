@@ -1,0 +1,120 @@
+name: Update FAST Tcal Data
+
+on:
+  schedule:
+    # Monday 10:00 Asia/Shanghai (02:00 UTC).
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tcal-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+      R2_PREFIX: ${{ secrets.R2_PREFIX }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Check the FAST website
+        id: check
+        run: |
+          python -m tcal_pipeline.check_upstream \
+            --snapshot build/upstream-check.json \
+            --github-output
+
+      - name: Stop on changed or ambiguous existing data
+        if: >-
+          steps.check.outputs.has_changed == 'true' ||
+          steps.check.outputs.manual_date_required == 'true'
+        run: |
+          echo "An existing source changed or a full date could not be determined."
+          exit 1
+
+      - name: Repair an interrupted R2 manifest sync
+        run: python -m tcal_pipeline.upload_to_r2 --manifest manifest.json
+
+      - name: Download, convert and publish new dates
+        if: steps.check.outputs.has_new == 'true'
+        env:
+          NEW_DATES: ${{ steps.check.outputs.new_dates }}
+        run: |
+          set -euo pipefail
+
+          python -c '
+          import json
+          import os
+          from tcal_pipeline.convert_tcal import validate_date
+          dates = sorted({validate_date(value) for value in json.loads(os.environ["NEW_DATES"])})
+          print("\n".join(dates))
+          ' > build/new-dates.txt
+
+          while IFS= read -r date; do
+            echo "Processing ${date}"
+            python -m tcal_pipeline.update_from_fast \
+              --date "${date}" \
+              --output build
+            python -m tcal_pipeline.promote_release \
+              "build/${date}/source-record.json" \
+              --verify-only
+            python -m tcal_pipeline.publish_release \
+              "build/${date}/source-record.json" \
+              --publish
+            python -m tcal_pipeline.upload_to_r2 \
+              --zip "build/${date}/${date}.zip" \
+              --date "${date}"
+            python -m tcal_pipeline.promote_release \
+              "build/${date}/source-record.json"
+          done < build/new-dates.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json sources.json
+          if git diff --cached --quiet; then
+            echo "Tracked metadata is already current."
+          else
+            git commit -m "data: publish new Tcal calibration"
+            git push origin HEAD:main
+          fi
+
+      - name: Publish the updated manifest to R2
+        if: steps.check.outputs.has_new == 'true'
+        run: python -m tcal_pipeline.upload_to_r2 --manifest manifest.json
+
+      - name: Upload diagnostics after a failed update
+        if: failure() && steps.check.outputs.has_new == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tcal-update-diagnostics
+          path: |
+            build/upstream-check.json
+            build/*/source-record.json
+            build/*/qa
+          if-no-files-found: ignore
+          retention-days: 14

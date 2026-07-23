@@ -2,3 +2,8 @@
 .env
 .env.example
 __pycache__/
+build/
+.pytest_cache/
+
+# Machine-specific legacy helper; not part of the automated pipeline.
+prepare_release.py
